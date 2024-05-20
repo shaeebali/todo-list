@@ -19,25 +19,33 @@ const App = () => {
     setTodoList(res.data);
   }
 // Create a handleDelete() function to remove to-do list with matching id
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError();
-    const data = new FormData(e.currentTarget);
+  const handleDelete = async (id) => {
     try {
-      data.set('description', todo.description);
-      data.set('created_at', `${new Date().toISOString()}`);
-      const newTodo = await createTodo(data);
-      if (newTodo.error) {
-        setError(newTodo.error);
-      }
-      setTodo({ description: '' });
+      await removeTodo(id);
       fetchTodos();
     } catch (error) {
       setError(error);
-    } 
-  };
-  
+    }
+  }; 
+
 // Create a handleSubmit() function to add new to-do list
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError();
+  const data = new FormData(e.currentTarget);
+  try {
+    data.set('description', todo.description);
+    data.set('created_at', `${new Date().toISOString()}`);
+    const newTodo = await createTodo(data);
+    if (newTodo.error) {
+      setError(newTodo.error);
+    }
+    setTodo({ description: '' });
+    fetchTodos();
+  } catch (error) {
+    setError(error);
+  } 
+};
 
   useEffect(() => {
     // Initialize todoList
