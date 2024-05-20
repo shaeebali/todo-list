@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { getTodos, createTodo, removeTodo } from './util';
+import { set } from 'mongoose';
 
 const App = () => {
   const [todo, setTodo] = useState({
@@ -18,7 +19,24 @@ const App = () => {
     setTodoList(res.data);
   }
 // Create a handleDelete() function to remove to-do list with matching id
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError();
+    const data = new FormData(e.currentTarget);
+    try {
+      data.set('description', todo.description);
+      data.set('created_at', `${new Date().toISOString()}`);
+      const newTodo = await createTodo(data);
+      if (newTodo.error) {
+        setError(newTodo.error);
+      }
+      setTodo({ description: '' });
+      fetchTodos();
+    } catch (error) {
+      setError(error);
+    } 
+  };
+  
 // Create a handleSubmit() function to add new to-do list
 
   useEffect(() => {
